@@ -22,6 +22,7 @@ $(function(){
     $('<div>')
     .addClass('node')
     .attr('id', key)
+    .text(key)
     .css({"left": this.x+"px", "top": this.y+"px"})
     .click(toggleSelectedNode)
     .appendTo('body');
@@ -61,7 +62,7 @@ $(function(){
 
       // Sort nodes so we're always working from the current best path option
       openNodes.sort(function(a,b) {
-        return a.totalCost - b.totalCost;
+        return b.totalCost - a.totalCost;
       });
 
       curNode = openNodes.pop();

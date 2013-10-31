@@ -10,8 +10,15 @@
   width: 20px;
   height: 20px;
   @include border-radius(10px);
-  background-color: red;
+  background-color: #899096;
   position: absolute;
+  transition: all 0.25s;
+  font-size: 10px;
+  font-weight: bold;
+
+  &:hover {
+    background-color: #515c73;
+  }
 }
 
 .path {
@@ -19,5 +26,5 @@
   transform-origin: 0% 0%;
 
   height: 2px;
-  background-color: blue;
+  background-color: #ff5400;
 }
