@@ -15,6 +15,7 @@
   transition: all 0.25s;
   font-size: 10px;
   font-weight: bold;
+  z-index: 3;
 
   &:hover {
     background-color: #515c73;
@@ -24,7 +25,16 @@
 .path {
   position: absolute;
   transform-origin: 0% 0%;
+}
 
-  height: 2px;
+.route {
+  background-color: #d2dbdc;
+  height: 3px;
+  z-index: 1;
+}
+
+.solution {
   background-color: #ff5400;
+  height: 2px;
+  z-index: 2;
 }

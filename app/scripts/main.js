@@ -2,6 +2,7 @@ $(function(){
 
   window.nodes = {};
   var selectedNode1;
+  var routesTable = {};
 
   var Node = function(id) {
     this.x = Math.floor(document.width * Math.random());
@@ -11,25 +12,49 @@ $(function(){
   };
 
   Node.prototype.findNeighbors = function() {
+
+    var makeNeighbors = function(node1, node2) {
+      if (node1.neighbors.indexOf(node2) === -1) {
+        node1.neighbors.push(node2);
+      }
+      if (node2.neighbors.indexOf(node1) === -1) {
+        node2.neighbors.push(node1);
+      }
+
+      var routeKey = Math.min(node1.id, node2.id) + "-" + Math.max(node1.id, node2.id);
+      routesTable[routeKey] = [node1, node2];
+    };
+
     for (var key in nodes) {
-      if (nodes[key] !== this && Math.abs(this.x-nodes[key].x)+Math.abs(this.y-nodes[key].y) < 200) {
-        this.neighbors.push(nodes[key]);
+      var chance = Math.random();
+      if (nodes[key] !== this) {
+        if (Math.abs(this.x-nodes[key].x)+Math.abs(this.y-nodes[key].y) < 30 && chance < 0.6) {
+          makeNeighbors(this, nodes[key]);
+        } else if (Math.abs(this.x-nodes[key].x)+Math.abs(this.y-nodes[key].y) < 50 && chance < 0.4) {
+          makeNeighbors(this, nodes[key]);
+        } else if (Math.abs(this.x-nodes[key].x)+Math.abs(this.y-nodes[key].y) < 80 && chance < 0.3) {
+          makeNeighbors(this, nodes[key]);
+        } else if (Math.abs(this.x-nodes[key].x)+Math.abs(this.y-nodes[key].y) < 120 && chance < 0.2) {
+          makeNeighbors(this, nodes[key]);
+        }
       }
     }
+
+
   };
 
   Node.prototype.createDomNode = function(key) {
     $('<div>')
     .addClass('node')
     .attr('id', key)
-    .text(key)
+    // .text(key)
     .css({"left": this.x+"px", "top": this.y+"px"})
     .click(toggleSelectedNode)
     .appendTo('body');
   }
 
   var createNodes = function() {
-    var numNodes = parseInt(window.location.hash.substring(1)) || 50;
+    var numNodes = parseInt(window.location.hash.substring(1)) || 200;
     for (var i = 0; i < numNodes; i++) {
       nodes[i] = new Node(i);
     }
@@ -38,20 +63,9 @@ $(function(){
       nodes[key].findNeighbors();
       nodes[key].createDomNode(key);
     }
-  };
 
-  var toggleSelectedNode = function(event) {
-    var id = event.target.id;
-    if (!selectedNode1) {
-      selectedNode1 = nodes[event.target.id];
-    } else if (selectedNode1 && selectedNode1 !== nodes[event.target.id]) {
-      // Handle two nodes selected
-      var selectedNode2 = nodes[event.target.id];
-      findShortestPath(selectedNode1, selectedNode2);
-      // Set node back to undefined after finding path
-      selectedNode1 = undefined;
-    } else {
-      selectedNode1 = undefined;
+    for (var key in routesTable) {
+      createPathSegment(routesTable[key][0], routesTable[key][1], 'route');
     }
   };
 
@@ -76,7 +90,7 @@ $(function(){
           pathNodes.push(curNode.parent);
           curNode = curNode.parent;
         }
-        return createPaths(pathNodes);
+        return createSolutionPath(pathNodes);
       }
 
       for (var i = 0; i < curNode.neighbors.length; i++) {
@@ -107,31 +121,18 @@ $(function(){
     resetGraph();
   };
 
-  var resetGraph = function() {
-    $('.path').remove();
-    for (var key in nodes) {
-      var node = nodes[key];
-      delete node.parent;
-      delete node.costFromParent;
-      delete node.costToEnd;
-      delete node.totalCost;
-      delete node.visited;
-    }
-  }
-
   var calcPathCost = function(node1, node2) {
     return Math.sqrt((node1.x-node2.x)*(node1.x-node2.x)+(node1.y-node2.y)*(node1.y-node2.y))
   }
 
-  var createPaths = function(pathNodes) {
-    // console.log(pathNodes);
+  var createSolutionPath = function(pathNodes) {
     for (var i = 0; i < pathNodes.length-1; i++) {
-      createPath(pathNodes[i], pathNodes[i+1]);
+      createPathSegment(pathNodes[i], pathNodes[i+1], 'solution');
     }
     setTimeout(resetGraph, 1000);
   };
 
-  var createPath = function(node1, node2) {
+  var createPathSegment = function(node1, node2, pathClass) {
     var x1 = node1.x;
     var y1 = node1.y;
     var x2 = node2.x;
@@ -143,12 +144,40 @@ $(function(){
 
     var path = $('<div>')
         .addClass('path')
+        .addClass(pathClass)
         .css({'transform': transform})
         .width(length)
         .offset({left: x1+10, top: y1+10})
         .appendTo('body');
 
     return path;
+  };
+
+  var resetGraph = function() {
+    // $('.solution').remove();
+    for (var key in nodes) {
+      var node = nodes[key];
+      delete node.parent;
+      delete node.costFromParent;
+      delete node.costToEnd;
+      delete node.totalCost;
+      delete node.visited;
+    }
+  }
+
+  var toggleSelectedNode = function(event) {
+    var id = event.target.id;
+    if (!selectedNode1) {
+      selectedNode1 = nodes[event.target.id];
+    } else if (selectedNode1 && selectedNode1 !== nodes[event.target.id]) {
+      // Handle two nodes selected
+      var selectedNode2 = nodes[event.target.id];
+      findShortestPath(selectedNode1, selectedNode2);
+      // Set node back to undefined after finding path
+      selectedNode1 = undefined;
+    } else {
+      selectedNode1 = undefined;
+    }
   };
 
   createNodes();
