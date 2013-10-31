@@ -7,9 +7,9 @@
 }
 
 .node {
-  width: 20px;
-  height: 20px;
-  @include border-radius(10px);
+  width: 10px;
+  height: 10px;
+  @include border-radius(5px);
   background-color: #899096;
   position: absolute;
   transition: all 0.25s;
@@ -25,6 +25,7 @@
 .path {
   position: absolute;
   transform-origin: 0% 0%;
+  transition: width 0.25s linear;
 }
 
 .route {

@@ -48,7 +48,7 @@ $(function(){
     .addClass('node')
     .attr('id', key)
     // .text(key)
-    .css({"left": this.x+"px", "top": this.y+"px"})
+    .css({"left": this.x+5+"px", "top": this.y+5+"px"})
     .click(toggleSelectedNode)
     .appendTo('body');
   }
@@ -90,7 +90,8 @@ $(function(){
           pathNodes.push(curNode.parent);
           curNode = curNode.parent;
         }
-        return createSolutionPath(pathNodes);
+        createSolutionPath(pathNodes);
+        return resetGraph();
       }
 
       for (var i = 0; i < curNode.neighbors.length; i++) {
@@ -126,10 +127,12 @@ $(function(){
   }
 
   var createSolutionPath = function(pathNodes) {
-    for (var i = 0; i < pathNodes.length-1; i++) {
-      createPathSegment(pathNodes[i], pathNodes[i+1], 'solution');
+    createPathSegment(pathNodes.pop(), pathNodes[pathNodes.length-1], 'solution');
+    if (pathNodes.length > 1) {
+      setTimeout(function() {
+        createSolutionPath(pathNodes);
+      }, 250);
     }
-    setTimeout(resetGraph, 1000);
   };
 
   var createPathSegment = function(node1, node2, pathClass) {
@@ -143,12 +146,12 @@ $(function(){
     var transform = 'rotate('+angle+'deg)';
 
     var path = $('<div>')
+        .appendTo('body')
         .addClass('path')
         .addClass(pathClass)
         .css({'transform': transform})
         .width(length)
-        .offset({left: x1+10, top: y1+10})
-        .appendTo('body');
+        .offset({left: x1+10, top: y1+10});
 
     return path;
   };
