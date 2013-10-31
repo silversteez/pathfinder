@@ -8,15 +8,11 @@ $(function(){
     this.y = Math.floor(document.height * Math.random());
     this.id = id;
     this.neighbors = [];
-    this.open = true;
-    this.parent;
-    this.costFromParent;
-    this.costToEnd;
   };
 
   Node.prototype.findNeighbors = function() {
     for (var key in nodes) {
-      if (nodes[key] !== this && Math.abs(this.x-nodes[key].x)+Math.abs(this.y-nodes[key].y) < 300) {
+      if (nodes[key] !== this && Math.abs(this.x-nodes[key].x)+Math.abs(this.y-nodes[key].y) < 200) {
         this.neighbors.push(nodes[key]);
       }
     }
@@ -60,36 +56,67 @@ $(function(){
 
   var findShortestPath = function(curNode, endNode) {
     var openNodes = [curNode];
-    var closedNodes = [];
 
     while (openNodes.length > 0) {
-      // TODO assumes curNode has the best score? openNodes is sorted? or loop and get the lowest cost node
+
+      // Sort nodes so we're always working from the current best path option
+      openNodes.sort(function(a,b) {
+        return a.totalCost - b.totalCost;
+      });
+
       curNode = openNodes.pop();
+      curNode.visited = true;
 
       if (curNode === endNode) {
-        // TODO return path
-      }
+        console.log('path found!');
 
-      curNode.open = false;
+        var pathNodes = [endNode];
+        while (curNode.parent) {
+          pathNodes.push(curNode.parent);
+          curNode = curNode.parent;
+        }
+        return createPaths(pathNodes);
+      }
 
       for (var i = 0; i < curNode.neighbors.length; i++) {
         var neighbor = curNode.neighbors[i];
-        if (neighbor.open && openNodes.indexOf(neighbor) === -1) { // If neighbor isn't in openNodes, add it
+
+        if (!neighbor.visited && openNodes.indexOf(neighbor) === -1) { // If neighbor isn't in openNodes, add it
           neighbor.parent = curNode;
           neighbor.costFromParent = calcPathCost(curNode, neighbor);
           neighbor.costToEnd = calcPathCost(neighbor, endNode);
           neighbor.totalCost = neighbor.costFromParent + neighbor.costToEnd;
-          // neighbor.open = false;
           openNodes.push(neighbor);
-        }
+        } else if (!neighbor.visited) { // If neighbor is already in openNodes, compare cost from curNode and replace parent if path is better
+          var costFromParent = calcPathCost(curNode, neighbor);
+          var costToEnd = calcPathCost(neighbor, endNode);
+          var totalCostFromCurNode = costFromParent + costToEnd;
 
-        if (true) { // If neighbor is in openNodes, compare cost and fix parent if better
-
+          if (totalCostFromCurNode < neighbor.totalCost) {
+            neighbor.parent = curNode;
+            neighbor.costFromParent = costFromParent;
+            neighbor.costToEnd = costToEnd;
+            neighbor.totalCost = totalCostFromCurNode;
+          }
         }
       }
     }
 
+    console.log("no path found");
+    resetGraph();
   };
+
+  var resetGraph = function() {
+    $('.path').remove();
+    for (var key in nodes) {
+      var node = nodes[key];
+      delete node.parent;
+      delete node.costFromParent;
+      delete node.costToEnd;
+      delete node.totalCost;
+      delete node.visited;
+    }
+  }
 
   var calcPathCost = function(node1, node2) {
     return Math.sqrt((node1.x-node2.x)*(node1.x-node2.x)+(node1.y-node2.y)*(node1.y-node2.y))
@@ -100,6 +127,7 @@ $(function(){
     for (var i = 0; i < pathNodes.length-1; i++) {
       createPath(pathNodes[i], pathNodes[i+1]);
     }
+    setTimeout(resetGraph, 1000);
   };
 
   var createPath = function(node1, node2) {
