@@ -1,6 +1,6 @@
 $(function(){
 
-  var nodes = {};
+  window.nodes = {};
   var routesTable = {};
   var selectedNode1;
 
@@ -8,6 +8,7 @@ $(function(){
     this.x = Math.floor((document.width-document.width*0.2) * Math.random() + document.width*0.1);
     this.y = Math.floor((document.height-document.height*0.2) * Math.random() + document.height*0.1);
     this.id = id;
+    this.costFromStart = 0;
     this.neighbors = [];
   };
 
@@ -106,27 +107,24 @@ $(function(){
 
         if (!neighbor.visited && openNodes.indexOf(neighbor) === -1) { // If neighbor isn't in openNodes, add it
           neighbor.parent = curNode;
-          neighbor.costFromParent = calcPathCost(curNode, neighbor);
-          neighbor.costToEnd = calcPathCost(neighbor, endNode);
-          neighbor.totalCost = neighbor.costFromParent + neighbor.costToEnd;
+          neighbor.costFromStart = curNode.costFromStart + calcPathCost(curNode, neighbor);
+          neighbor.costToEnd = calcManhattanCost(neighbor, endNode);
+          neighbor.totalCost = neighbor.costFromStart + neighbor.costToEnd;
           $('#'+neighbor.id).addClass('open'); // Visualize open nodes
           openNodes.push(neighbor);
-        } else if (!neighbor.visited) { // If neighbor is already in openNodes, compare cost from curNode and replace parent if path is better
-          var costFromParent = calcPathCost(curNode, neighbor);
-          var costToEnd = calcPathCost(neighbor, endNode);
-          var totalCostFromCurNode = costFromParent + costToEnd;
-
-          if (totalCostFromCurNode < neighbor.totalCost) {
+        } else if (!neighbor.visited) { // If neighbor is already in openNodes, compare total cost to reach it from curNode and replace parent if path is better
+          var costFromStart = curNode.costFromStart + calcPathCost(curNode, neighbor);
+          if (costFromStart < neighbor.costFromStart) {
             neighbor.parent = curNode;
-            neighbor.costFromParent = costFromParent;
-            neighbor.costToEnd = costToEnd;
-            neighbor.totalCost = totalCostFromCurNode;
+            neighbor.costFromStart = costFromStart;
+            neighbor.costToEnd = calcManhattanCost(neighbor, endNode);
+            neighbor.totalCost = neighbor.costFromStart + neighbor.costToEnd;
             $('#'+neighbor.id).removeClass('open').addClass('changed'); //Visualize open nodes that have changed parents
           }
         }
       }
       if (openNodes.length > 0) {
-        setTimeout(checkNode, 500);
+        setTimeout(checkNode, 1000);
       } else {
         console.log("no path found");
         resetGraph();
@@ -138,6 +136,10 @@ $(function(){
 
   var calcPathCost = function(node1, node2) {
     return Math.sqrt((node1.x-node2.x)*(node1.x-node2.x)+(node1.y-node2.y)*(node1.y-node2.y))
+  }
+
+  var calcManhattanCost = function(node1, node2) {
+    return Math.abs(node1.x-node2.x) + Math.abs(node1.y-node2.y);
   }
 
   var createSolutionPath = function(pathNodes) {
@@ -178,7 +180,7 @@ $(function(){
     for (var key in nodes) {
       var node = nodes[key];
       delete node.parent;
-      delete node.costFromParent;
+      delete node.costFromStart;
       delete node.costToEnd;
       delete node.totalCost;
       delete node.visited;
