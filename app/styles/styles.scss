@@ -12,7 +12,7 @@
   @include border-radius(5px);
   background-color: #899096;
   position: absolute;
-  transition: all 0.25s;
+  transition: all 0.5s;
   font-size: 10px;
   font-weight: bold;
   z-index: 4;
@@ -23,7 +23,7 @@
 }
 
 .curNode {
-  background-color: #ff5400;
+  background-color: #FF0066;
 }
 
 .open {
@@ -37,7 +37,6 @@
 .path {
   position: absolute;
   transform-origin: 0% 0%;
-  transition: width 0.25s linear;
 }
 
 .route {
@@ -47,13 +46,15 @@
 }
 
 .solution {
-  background-color: #ff2d00;
-  height: 2px;
+  background-color: #00ADFF;
+  height: 3px;
   z-index: 3;
+  transition: width 0.2s linear;
 }
 
 .possible {
-  background-color: blue;
+  background-color: #5b6063;
   height: 2px;
   z-index: 2;
+  transition: width 0.5s linear;
 }

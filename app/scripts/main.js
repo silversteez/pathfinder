@@ -56,7 +56,7 @@ $(function(){
   }
 
   var createGraph = function() {
-    var numNodes = parseInt(window.location.hash.substring(1)) || 300;
+    var numNodes = parseInt(window.location.hash.substring(1)) || 200;
     for (var i = 0; i < numNodes; i++) {
       nodes[i] = new Node(i);
     }
@@ -75,7 +75,7 @@ $(function(){
 
   var findShortestPath = function(curNode, endNode) {
     var openNodes = [curNode];
-    var prevNode;
+    // var prevNode;
 
     var checkNode = function() {
       // Sort nodes so we're always working from the current best path option
@@ -88,9 +88,9 @@ $(function(){
 
       $('#'+curNode.id).removeClass('open').addClass('curNode'); // Visualize current node
 
-      if (prevNode) {
+      if (curNode.parent) {
         console.log('making seg');
-        createPathSegment(prevNode, curNode, 'possible'); // Visualize path from previously checked node to current node
+        createPathSegment(curNode.parent, curNode, 'possible'); // Visualize path from previously checked node to current node
       }
 
       if (curNode === endNode) {
@@ -130,8 +130,8 @@ $(function(){
         }
       }
       if (openNodes.length > 0) {
-        prevNode = curNode;
-        setTimeout(checkNode, 250);
+        // prevNode = curNode;
+        setTimeout(checkNode, 500);
       } else {
         console.log("no path found");
         resetGraph();
@@ -150,7 +150,7 @@ $(function(){
     if (pathNodes.length > 1) {
       setTimeout(function() {
         createSolutionPath(pathNodes);
-      }, 250);
+      }, 200);
     }
   };
 
