@@ -41,8 +41,6 @@ $(function(){
         }
       }
     }
-
-
   };
 
   Node.prototype.createDomNode = function(key) {
@@ -90,7 +88,7 @@ $(function(){
         createPathSegment(curNode.parent, curNode, 'possible'); // Visualize path to current node from its parent
       }
 
-      if (curNode === endNode) {
+      if (curNode === endNode) { // Solution found
         console.log('path found!');
 
         var pathNodes = [endNode];
@@ -98,6 +96,7 @@ $(function(){
           pathNodes.push(curNode.parent);
           curNode = curNode.parent;
         }
+        pathNodes.reverse();
         createSolutionPath(pathNodes);
         return resetGraph();
       }
