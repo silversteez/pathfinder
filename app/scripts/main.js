@@ -47,10 +47,9 @@ $(function(){
 
   Node.prototype.createDomNode = function(key) {
     $('<div>')
-    // .text(key)
     .addClass('node')
     .attr('id', key)
-    .css({"left": this.x+5+"px", "top": this.y+5+"px"})
+    .css({"left": this.x-5+"px", "top": this.y-5+"px"})
     .click(toggleSelectedNode)
     .appendTo('body');
   }
@@ -171,13 +170,12 @@ $(function(){
         .addClass(pathClass)
         .css({'transform': transform})
         .width(length)
-        .offset({left: x1+10, top: y1+10});
+        .offset({left: x1, top: y1});
 
     return path;
   };
 
   var resetGraph = function() {
-    // $('.solution').remove();
     for (var key in nodes) {
       var node = nodes[key];
       delete node.parent;
@@ -188,20 +186,31 @@ $(function(){
     }
   }
 
+  var resetVisualization = function() {
+    $('.node').removeClass('curNode open changed');
+    $('.solution').remove();
+    $('.possible').remove();
+    $('.selectedNode1').remove();
+    $('.selectedNode2').remove();
+    selectedNode1 = undefined;
+  };
+
   var toggleSelectedNode = function(event) {
     var id = event.target.id;
     if (!selectedNode1) {
       selectedNode1 = nodes[event.target.id];
+      $(this).clone().appendTo('body').addClass('selectedNode1');
     } else if (selectedNode1 && selectedNode1 !== nodes[event.target.id]) {
       // Handle two nodes selected
       var selectedNode2 = nodes[event.target.id];
+      $(this).clone().appendTo('body').addClass('selectedNode2');
       findShortestPath(selectedNode1, selectedNode2);
       // Set node back to undefined after finding path
       selectedNode1 = undefined;
-    } else {
-      selectedNode1 = undefined;
     }
   };
+
+  $('.reset').click(resetVisualization);
 
   createGraph();
 });

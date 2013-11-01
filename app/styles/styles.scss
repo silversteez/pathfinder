@@ -1,9 +1,17 @@
+$color-current: #FF7A00;
+$color-selected: #00ADFF;
+
 @mixin border-radius($args...) {
   -webkit-border-radius: $args;
      -moz-border-radius: $args;
       -ms-border-radius: $args;
        -o-border-radius: $args;
           border-radius: $args;
+}
+
+.instructions {
+  margin: 2%;
+  color: $color-selected;
 }
 
 .node {
@@ -16,14 +24,29 @@
   font-size: 10px;
   font-weight: bold;
   z-index: 4;
+  cursor: pointer;
+  transform-origin: 50% 50%;
 
   &:hover {
-    background-color: #515c73;
+    background-color: #FF7A00;
+    transform: scale(1.5,1.5);
   }
 }
 
-.curNode {
+.selectedNode1 {
+  transform: scale(2.5,2.5);
+  background-color: $color-selected;
+  z-index: -1;
+}
+
+.selectedNode2 {
+  transform: scale(2.5,2.5);
   background-color: #FF0066;
+  z-index: -1;
+}
+
+.curNode {
+  background-color: $color-current;
 }
 
 .open {
@@ -36,12 +59,12 @@
 
 .path {
   position: absolute;
-  transform-origin: 0% 0%;
+  transform-origin: 0% 50%;
 }
 
 .route {
   background-color: #d2dbdc;
-  height: 3px;
+  height: 2px;
   z-index: 1;
 }
 
@@ -53,8 +76,23 @@
 }
 
 .possible {
-  background-color: #5b6063;
+  background-color: #14FF00;
   height: 2px;
   z-index: 2;
   transition: width 0.5s linear;
+}
+
+.button {
+  background-color: #FF0066;
+  @include border-radius(5px);
+  color: #fff;
+  padding: 10px;
+  position: absolute;
+  right: 2%;
+  bottom: 2%;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.75;
+  }
 }
