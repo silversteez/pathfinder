@@ -1,12 +1,12 @@
 $(function(){
 
-  window.nodes = {};
-  var selectedNode1;
+  var nodes = {};
   var routesTable = {};
+  var selectedNode1;
 
   var Node = function(id) {
-    this.x = Math.floor(document.width * Math.random());
-    this.y = Math.floor(document.height * Math.random());
+    this.x = Math.floor((document.width-document.width*0.2) * Math.random() + document.width*0.1);
+    this.y = Math.floor((document.height-document.height*0.2) * Math.random() + document.height*0.1);
     this.id = id;
     this.neighbors = [];
   };
@@ -27,14 +27,16 @@ $(function(){
 
     for (var key in nodes) {
       var chance = Math.random();
+      var screenSize = Math.sqrt(document.width*document.height);
+
       if (nodes[key] !== this) {
-        if (Math.abs(this.x-nodes[key].x)+Math.abs(this.y-nodes[key].y) < 30 && chance < 0.6) {
+        if (Math.abs(this.x-nodes[key].x)+Math.abs(this.y-nodes[key].y) < screenSize*0.03 && chance < 0.6) {
           makeNeighbors(this, nodes[key]);
-        } else if (Math.abs(this.x-nodes[key].x)+Math.abs(this.y-nodes[key].y) < 50 && chance < 0.4) {
+        } else if (Math.abs(this.x-nodes[key].x)+Math.abs(this.y-nodes[key].y) < screenSize*0.05 && chance < 0.4) {
           makeNeighbors(this, nodes[key]);
-        } else if (Math.abs(this.x-nodes[key].x)+Math.abs(this.y-nodes[key].y) < 80 && chance < 0.3) {
+        } else if (Math.abs(this.x-nodes[key].x)+Math.abs(this.y-nodes[key].y) < screenSize*0.08 && chance < 0.3) {
           makeNeighbors(this, nodes[key]);
-        } else if (Math.abs(this.x-nodes[key].x)+Math.abs(this.y-nodes[key].y) < 120 && chance < 0.2) {
+        } else if (Math.abs(this.x-nodes[key].x)+Math.abs(this.y-nodes[key].y) < screenSize*0.12 && chance < 0.2) {
           makeNeighbors(this, nodes[key]);
         }
       }
@@ -45,16 +47,16 @@ $(function(){
 
   Node.prototype.createDomNode = function(key) {
     $('<div>')
+    // .text(key)
     .addClass('node')
     .attr('id', key)
-    // .text(key)
     .css({"left": this.x+5+"px", "top": this.y+5+"px"})
     .click(toggleSelectedNode)
     .appendTo('body');
   }
 
-  var createNodes = function() {
-    var numNodes = parseInt(window.location.hash.substring(1)) || 200;
+  var createGraph = function() {
+    var numNodes = parseInt(window.location.hash.substring(1)) || 300;
     for (var i = 0; i < numNodes; i++) {
       nodes[i] = new Node(i);
     }
@@ -64,9 +66,11 @@ $(function(){
       nodes[key].createDomNode(key);
     }
 
+    var routes = [];
     for (var key in routesTable) {
-      createPathSegment(routesTable[key][0], routesTable[key][1], 'route');
+      routes.push(createPathSegment(routesTable[key][0], routesTable[key][1], 'route'));
     }
+    $('body').append(routes);
   };
 
   var findShortestPath = function(curNode, endNode) {
@@ -145,9 +149,13 @@ $(function(){
     var angle  = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
     var transform = 'rotate('+angle+'deg)';
 
-    var path = $('<div>')
-        .appendTo('body')
-        .addClass('path')
+    var path = $('<div>');
+
+    if (pathClass === 'solution') {
+      path.appendTo('body')
+    }
+
+    path.addClass('path')
         .addClass(pathClass)
         .css({'transform': transform})
         .width(length)
@@ -183,5 +191,5 @@ $(function(){
     }
   };
 
-  createNodes();
+  createGraph();
 });
