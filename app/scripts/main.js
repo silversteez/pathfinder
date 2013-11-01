@@ -75,7 +75,6 @@ $(function(){
 
   var findShortestPath = function(curNode, endNode) {
     var openNodes = [curNode];
-    // var prevNode;
 
     var checkNode = function() {
       // Sort nodes so we're always working from the current best path option
@@ -89,8 +88,7 @@ $(function(){
       $('#'+curNode.id).removeClass('open').addClass('curNode'); // Visualize current node
 
       if (curNode.parent) {
-        console.log('making seg');
-        createPathSegment(curNode.parent, curNode, 'possible'); // Visualize path from previously checked node to current node
+        createPathSegment(curNode.parent, curNode, 'possible'); // Visualize path to current node from its parent
       }
 
       if (curNode === endNode) {
@@ -130,7 +128,6 @@ $(function(){
         }
       }
       if (openNodes.length > 0) {
-        // prevNode = curNode;
         setTimeout(checkNode, 500);
       } else {
         console.log("no path found");
