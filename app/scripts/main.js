@@ -75,9 +75,9 @@ $(function(){
 
   var findShortestPath = function(curNode, endNode) {
     var openNodes = [curNode];
+    var prevNode;
 
-    while (openNodes.length > 0) {
-
+    var checkNode = function() {
       // Sort nodes so we're always working from the current best path option
       openNodes.sort(function(a,b) {
         return b.totalCost - a.totalCost;
@@ -85,6 +85,13 @@ $(function(){
 
       curNode = openNodes.pop();
       curNode.visited = true;
+
+      $('#'+curNode.id).removeClass('open').addClass('curNode'); // Visualize current node
+
+      if (prevNode) {
+        console.log('making seg');
+        createPathSegment(prevNode, curNode, 'possible'); // Visualize path from previously checked node to current node
+      }
 
       if (curNode === endNode) {
         console.log('path found!');
@@ -106,6 +113,7 @@ $(function(){
           neighbor.costFromParent = calcPathCost(curNode, neighbor);
           neighbor.costToEnd = calcPathCost(neighbor, endNode);
           neighbor.totalCost = neighbor.costFromParent + neighbor.costToEnd;
+          $('#'+neighbor.id).addClass('open'); // Visualize open nodes
           openNodes.push(neighbor);
         } else if (!neighbor.visited) { // If neighbor is already in openNodes, compare cost from curNode and replace parent if path is better
           var costFromParent = calcPathCost(curNode, neighbor);
@@ -117,13 +125,20 @@ $(function(){
             neighbor.costFromParent = costFromParent;
             neighbor.costToEnd = costToEnd;
             neighbor.totalCost = totalCostFromCurNode;
+            $('#'+neighbor.id).removeClass('open').addClass('changed'); //Visualize open nodes that have changed parents
           }
         }
       }
-    }
+      if (openNodes.length > 0) {
+        prevNode = curNode;
+        setTimeout(checkNode, 250);
+      } else {
+        console.log("no path found");
+        resetGraph();
+      }
+    };
 
-    console.log("no path found");
-    resetGraph();
+    checkNode();
   };
 
   var calcPathCost = function(node1, node2) {
@@ -151,7 +166,7 @@ $(function(){
 
     var path = $('<div>');
 
-    if (pathClass === 'solution') {
+    if (pathClass !== 'route') {
       path.appendTo('body')
     }
 

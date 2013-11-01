@@ -15,11 +15,23 @@
   transition: all 0.25s;
   font-size: 10px;
   font-weight: bold;
-  z-index: 3;
+  z-index: 4;
 
   &:hover {
     background-color: #515c73;
   }
+}
+
+.curNode {
+  background-color: #ff5400;
+}
+
+.open {
+  background-color: #e5ff00;
+}
+
+.changed {
+  background-color: #ffd600;
 }
 
 .path {
@@ -35,7 +47,13 @@
 }
 
 .solution {
-  background-color: #ff5400;
+  background-color: #ff2d00;
+  height: 2px;
+  z-index: 3;
+}
+
+.possible {
+  background-color: blue;
   height: 2px;
   z-index: 2;
 }
