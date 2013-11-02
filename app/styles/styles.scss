@@ -12,6 +12,11 @@ $color-selected: #00ADFF;
 .instructions {
   margin: 2%;
   color: $color-selected;
+  float: left;
+}
+
+.visSpeed {
+  margin: 2% 0;
 }
 
 .node {

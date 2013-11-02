@@ -15,7 +15,7 @@ $(function(){
     this.x = Math.floor((document.width-document.width*0.2) * Math.random() + document.width*0.1);
     this.y = Math.floor((document.height-document.height*0.2) * Math.random() + document.height*0.1);
     for (var i = 0; i < this.id; i++) {
-      if (calcPathCost(nodes[i], this) < 35) {
+      if (calcPathCost(nodes[i], this) < 20) {
         this.setPosition();
       }
     }
@@ -63,7 +63,7 @@ $(function(){
   }
 
   var createGraph = function() {
-    var numNodes = parseInt(window.location.hash.substring(1)) || 200;
+    var numNodes = parseInt(window.location.hash.substring(1)) || 300;
     for (var i = 0; i < numNodes; i++) {
       nodes[i] = new Node(i);
     }
@@ -222,7 +222,7 @@ $(function(){
   };
 
   $('.reset').click(resetVisualization);
-  $('#visSpeed').on('change', function(event) {
+  $('.visSpeed').on('change', function(event) {
     visSpeed = event.target.value;
   });
 
