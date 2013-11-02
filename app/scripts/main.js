@@ -6,12 +6,20 @@ $(function(){
   var visSpeed = 1000;
 
   var Node = function(id) {
-    this.x = Math.floor((document.width-document.width*0.2) * Math.random() + document.width*0.1);
-    this.y = Math.floor((document.height-document.height*0.2) * Math.random() + document.height*0.1);
     this.id = id;
     this.costFromStart = 0;
     this.neighbors = [];
   };
+
+  Node.prototype.setPosition = function() {
+    this.x = Math.floor((document.width-document.width*0.2) * Math.random() + document.width*0.1);
+    this.y = Math.floor((document.height-document.height*0.2) * Math.random() + document.height*0.1);
+    for (var i = 0; i < this.id; i++) {
+      if (calcPathCost(nodes[i], this) < 35) {
+        this.setPosition();
+      }
+    }
+  }
 
   Node.prototype.findNeighbors = function() {
 
@@ -61,6 +69,7 @@ $(function(){
     }
 
     for (var key in nodes) {
+      nodes[key].setPosition();
       nodes[key].findNeighbors();
       nodes[key].createDomNode(key);
     }
