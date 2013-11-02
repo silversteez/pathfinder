@@ -3,6 +3,7 @@ $(function(){
   window.nodes = {};
   var routesTable = {};
   var selectedNode1;
+  var visSpeed = 1000;
 
   var Node = function(id) {
     this.x = Math.floor((document.width-document.width*0.2) * Math.random() + document.width*0.1);
@@ -83,7 +84,7 @@ $(function(){
       curNode = openNodes.pop();
       curNode.visited = true;
 
-      $('#'+curNode.id).removeClass('open').addClass('curNode'); // Visualize current node
+      $('#'+curNode.id).removeClass('open changed').addClass('curNode'); // Visualize current node
 
       if (curNode.parent) {
         createPathSegment(curNode.parent, curNode, 'possible'); // Visualize path to current node from its parent
@@ -124,7 +125,7 @@ $(function(){
         }
       }
       if (openNodes.length > 0) {
-        setTimeout(checkNode, 1000);
+        setTimeout(checkNode, visSpeed);
       } else {
         console.log("no path found");
         resetGraph();
@@ -212,6 +213,9 @@ $(function(){
   };
 
   $('.reset').click(resetVisualization);
+  $('#visSpeed').on('change', function(event) {
+    visSpeed = event.target.value;
+  });
 
   createGraph();
 });
