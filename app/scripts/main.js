@@ -15,7 +15,7 @@ $(function(){
     this.x = Math.floor((document.width-document.width*0.2) * Math.random() + document.width*0.1);
     this.y = Math.floor((document.height-document.height*0.2) * Math.random() + document.height*0.1);
     for (var i = 0; i < this.id; i++) {
-      if (calcPathCost(nodes[i], this) < 20) {
+      if (calcPathCost(nodes[i], this) < 5) {
         this.setPosition();
       }
     }
@@ -145,7 +145,7 @@ $(function(){
   };
 
   var calcPathCost = function(node1, node2) {
-    return Math.sqrt((node1.x-node2.x)*(node1.x-node2.x)+(node1.y-node2.y)*(node1.y-node2.y))
+    return Math.sqrt((node1.x-node2.x)*(node1.x-node2.x)+(node1.y-node2.y)*(node1.y-node2.y));
   }
 
   var calcManhattanCost = function(node1, node2) {
@@ -190,10 +190,10 @@ $(function(){
     for (var key in nodes) {
       var node = nodes[key];
       delete node.parent;
-      delete node.costFromStart;
       delete node.costToEnd;
       delete node.totalCost;
       delete node.visited;
+      node.costFromStart = 0;
     }
   }
 
