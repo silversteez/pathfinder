@@ -12,8 +12,8 @@ $(function(){
   };
 
   Node.prototype.setPosition = function() {
-    this.x = Math.floor((document.width-document.width*0.2) * Math.random() + document.width*0.1);
-    this.y = Math.floor((document.height-document.height*0.2) * Math.random() + document.height*0.1);
+    this.x = Math.floor((window.innerWidth-window.innerWidth*0.2) * Math.random() + window.innerWidth*0.1);
+    this.y = Math.floor((window.innerHeight-window.innerHeight*0.2) * Math.random() + window.innerHeight*0.1);
     for (var i = 0; i < this.id; i++) {
       if (calcPathCost(nodes[i], this) < 5) {
         this.setPosition();
@@ -37,7 +37,7 @@ $(function(){
 
     for (var key in nodes) {
       var chance = Math.random();
-      var screenSize = Math.sqrt(document.width*document.height);
+      var screenSize = Math.sqrt(window.innerWidth*window.innerHeight);
 
       if (nodes[key] !== this) {
         if (Math.abs(this.x-nodes[key].x)+Math.abs(this.y-nodes[key].y) < screenSize*0.03 && chance < 0.6) {
