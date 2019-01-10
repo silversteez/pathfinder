@@ -1,6 +1,6 @@
 $(function(){
 
-  window.nodes = {};
+  window.nodes = {}; //test
   var routesTable = {};
   var selectedNode1;
   var visSpeed = 1000;
